@@ -31,23 +31,15 @@ public class Main {
 	
 	static double calculateArea() {
 		double area = 0;
-		for (int i = 0; i < points.length-2; i++) {
-			area += getArea(points[0], points[i+1], points[i+2]);
+		for (int i = 0; i < points.length-1; i++) {
+			area += getArea(points[i], points[i+1]);
 		}
+		area += getArea(points[n-1], points[0]);
 		return area;
 	}
 	
-	static double getDistance(Point a, Point b) {
-		return Math.hypot(a.x - b.x, a.y - b.y);
-	}
-	static double getArea(Point a, Point b, Point c) {
-		double x1 = b.x - a.x;
-		double x2 = c.x - a.x;
-		double y1 = b.y - a.y;
-		double y2 = c.y - a.y;
-		
-		return (x2*y1 - x1*y2)/2; 
-				
+	static double getArea(Point a, Point b) {
+		return (a.x*b.y - b.x*a.y)/2; 
 	}
 	
 	
