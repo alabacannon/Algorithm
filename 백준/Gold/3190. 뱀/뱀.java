@@ -2,121 +2,89 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
-	static int direction = 0;
-	static int headX = 0;
-	static int headY = 0;
-	static HashMap<Integer, Integer> directionChangeMap = new HashMap<>();
-	// R,D,L,U
-	static int[] dx = {0,1,0,-1};
-	static int[] dy = {1,0,-1,0};
-	static int[][] applePosition;
-	static boolean gameover = false; 
+	static int[][] map;
 	static int n;
-	static Queue<int[]> snakePosition = new ArrayDeque<>();	
-	static boolean snakeSizeOver1 = false;
+	static int direction; // 0,1,2,3 -> 우 하 좌 상
+	static int[] head;
+	static Deque<int[]> body;
+	static HashMap<Integer, Character> action;
 	
 	public static void main(String[] args) throws IOException {
-		
+//		System.setIn(new FileInputStream("data/input.txt"));
 		Scanner sc = new Scanner(System.in);
 		n = sc.nextInt();
-		int k = sc.nextInt();
-		applePosition = new int[n][n];
-		for (int i = 0; i < k; i++) {
-			applePosition[sc.nextInt()-1][sc.nextInt()-1] = 1;
-		}
+		map = new int[n][n];
 		
-		int l = sc.nextInt();
-		for (int i = 0; i < l; i++) {
-			int key = sc.nextInt();
-			String d = sc.next();
-			switch(d) {
-			case "D":
-				directionChangeMap.put(key, 1); break;
-			case "L":
-				directionChangeMap.put(key, -1); break;
-			default :
-				continue;
-			}
-			
+		int k = sc.nextInt();
+		for (int i = 0; i < k; i++) {
+			int x = sc.nextInt()-1;
+			int y = sc.nextInt()-1;
+			map[x][y] = 1;
 		}
-		// 프로그램 시작
+		int l = sc.nextInt();
+		action = new HashMap<>(100);
+		
+		for (int i = 0; i < l; i++) {
+			action.put(sc.nextInt(), sc.next().charAt(0));
+		}
+		snakeGame();
+	}
+	
+	static void snakeGame() {
 		int time = 0;
-		snakePosition.offer(new int[] {headX,headY});
+		direction = 0;
+		head = new int[] {0,0}; 
+		body = new ArrayDeque<>();
+		int[] dx = {0,1,0,-1};
+		int[] dy = {1,0,-1,0};
 		while(true) {
-			time ++;
-			move();
-			directionControl(time);
-			if (gameover) {
+			time ++ ;
+			body.offer(head);
+			int nx = head[0] + dx[direction]; 
+			int ny = head[1] + dy[direction];
+			head = new int[] {nx,ny};
+
+			// 1. 게임 종료 여부 확인
+			if (gameOver(nx,ny)) {
 				break;
 			}
-		}
-		System.out.println(time);
-	}
-	
-	
-	private static void move() {
-		headX += dx[direction];
-		headY += dy[direction];
-		if (!(headX<n && headX>=0 && headY<n && headY>=0)) {
-			gameover = true;
-			return;
-			
-		}
-		if (snakeSizeOver1 && isSnakeMeetSnake()) {
-			gameover = true;
-			return;
-		}
-		
-		
-		if(!(isSnakeMeetApple())) {
-			snakePosition.offer(new int[] {headX,headY});
-			snakePosition.poll();
-		} else {
-			snakeSizeOver1 = true;
-			snakePosition.offer(new int[] {headX,headY});
-		}
-		
-		
-	}
-
-
-	public static boolean isSnakeMeetApple() {
-
-		if (applePosition[headX][headY]== 0) {
-			return false;
-		}
-		applePosition[headX][headY] = 0;
-		return true;
-	}
-	
-	
-	public static void directionControl(int time) {
-		if(directionChangeMap.containsKey(time)){
-			direction += directionChangeMap.get(time);
-			if (direction == -1) {
-				direction = 3;
+			// 2. 사과를 먹었는지 여부 확인
+			if (map[nx][ny] == 0) {
+				body.poll();
+			} else {
+				map[nx][ny] = 0;
 			}
-			if (direction == 4) {
-				direction = 0;
-			} 
+			
+			// 3. 방향을 바꾸는지 여부 확인
+			if (action.containsKey(time)) {
+				changeDirection(action.get(time));
+			}
 		}
+		
+		System.out.println(time);
 		
 	}
 	
-	public static boolean isSnakeMeetSnake() {
+	static void changeDirection(char rotation){
+		if (rotation == 'L') {
+			direction = direction == 0 ? 3 : direction-1 ;
+		} else {
+			direction = direction == 3 ? 0 : direction+1 ;
+		}
+	}
 
-		for (int[] body : snakePosition) {
-			if(headX == body[0] && headY == body[1]) {
+	static boolean gameOver(int nx, int ny) {
+		for (int[] element : body) {
+			if (element[0] == nx && element[1] == ny) {
 				return true;
 			}
 		}
-		return false;
+		
+		return nx <0 || nx >=n || ny <0 || ny >=n;
 	}
-	
-	
 }
