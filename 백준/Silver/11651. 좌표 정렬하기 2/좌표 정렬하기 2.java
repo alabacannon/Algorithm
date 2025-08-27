@@ -22,17 +22,10 @@ public class Main {
 		}
 		
 		Collections.sort(arr,(o1,o2) -> {
-			if (o1[1] > o2[1]) {
-				return 1;
-			} else if (o1[1] < o2[1]) {
-				return -1;
-			} else if (o1[0] > o2[0]) {
-				return 1;
-			} else if (o1[0] < o2[0]) {
-				return -1;
-			} else {
-				return 0;
+			if (o1[1] != o2[1]) {
+				return Integer.compare(o1[1], o2[1]);
 			}
+			return Integer.compare(o1[0], o2[0]);
 		});
 		for (int[] e : arr) {
 			bw.write(Integer.toString(e[0]) + " ");
