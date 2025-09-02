@@ -47,6 +47,6 @@ public class Main  {
 	}
 
 	private static boolean cross(int i, int j) {
-		return i == 0 || j == 0 || i + j == 0 || i == j;
+		return i + j == 0 || i == j;
 	}
 }
