@@ -21,7 +21,7 @@ public class Main {
 	private static void permRepitition(int cnt) {
 		if (cnt == m) {
 			for (int num : sel) {
-				sb.append(num + " ");
+				sb.append(num).append(" ");
 			}
 			sb.append("\n");
 			return;
