@@ -8,6 +8,7 @@ public class Main {
 	static int v;
 	static int e;
 	static int[] parent;
+	static int[] size; // 변경 사항: size 배열 추가
 	static PriorityQueue<Edge> heap;
 	public static void main(String[] args) throws IOException {
 //		BufferedReader br = new BufferedReader(new FileReader("data/input.txt"));
@@ -16,6 +17,7 @@ public class Main {
 		v = Integer.parseInt(st.nextToken()); // 정점 수
 		e = Integer.parseInt(st.nextToken()); // 간선 수 
 		parent = new int[v+1];
+		size = new int[v+1]; // 변경 사항: size 배열 초기화
 		heap = new PriorityQueue<>();
 		
 		for (int i = 0; i < e; i++) {
@@ -28,6 +30,7 @@ public class Main {
 		
 		for (int i = 1; i <= v; i++) {
 			parent[i] = i;
+			size[i] = 1; // 변경 사항: 각 집합의 크기를 1로 초기화
 		}
 		int ans = 0;
 		while (!heap.isEmpty()) {
@@ -44,12 +47,16 @@ public class Main {
 	private static void union(int v1, int v2) {
 		int p1 = find(v1);
 		int p2 = find(v2);
-		if (p1<p2) {
-			parent[p2] = p1;
-		} else {
-			parent[p1] = p2;
-		}
 		
+		if (p1 != p2) {
+			if (size[p1] < size[p2]) {
+				parent[p1] = p2;
+				size[p2] += size[p1];
+			} else {
+				parent[p2] = p1;
+				size[p1] += size[p2];
+			}
+		}
 	}
 
 	private static int find(int v) {
@@ -72,6 +79,5 @@ public class Main {
 		public int compareTo(Main.Edge o) {
 			return this.weight - o.weight;
 		}
-		
 	}
 }
