@@ -62,6 +62,8 @@ public class Solution {
                 if (visited[cur.to]) continue;
                 visited[cur.to] = true;
                 ans += cur.cost;
+                count++;
+                if (count == n) break;
                 for (int i = 0; i < n; i++) {
                     if (!visited[i]) {
                         double distance = getDistance(xArr[cur.to], yArr[cur.to], xArr[i], yArr[i]);
