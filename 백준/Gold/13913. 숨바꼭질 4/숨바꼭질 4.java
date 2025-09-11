@@ -15,7 +15,11 @@ public class Main {
 		StringBuilder sb =  new StringBuilder();
 		n = sc.nextInt();
 		k = sc.nextInt();
-
+		if (n == k) {
+			System.out.println(0);
+			System.out.println(k);
+			return;
+		}
 		dist = new int[200001];
 		parent = new int[200001];
 		Arrays.fill(dist, Integer.MAX_VALUE);
@@ -38,20 +42,39 @@ public class Main {
 		dist[n] = 0;
 		while (!queue.isEmpty()) {
 			int cur = queue.poll();
-			if (cur == k) {
-	            ans = dist[cur];
-	            return;
-	        }
-			int[] nextMoves = {cur - 1, cur + 1, cur * 2};
-	        for (int next : nextMoves) {
-	            if (next >= 0 && next < 200001 && dist[next] == Integer.MAX_VALUE) {
-	                dist[next] = dist[cur] + 1;
-	                parent[next] = cur;
-	                queue.offer(next);
-	            }
-	        }
+			int next = cur + 1;
+			if (next == k) {
+				ans = dist[cur] + 1;
+				parent[next] = cur;
+				return;
+			} else if(next < k && dist[next] > dist[cur] + 1) {
+				dist[next] = dist[cur] + 1;
+				parent[next] = cur;
+				queue.offer(next);
+			}
+			
+			next = cur - 1;
+			if (next == k) {
+				ans = dist[cur] + 1;
+				parent[next] = cur;
+				return;
+			} else if(next >= 0 && dist[next] > dist[cur] + 1) {
+				dist[next] = dist[cur] + 1;
+				parent[next] = cur;
+				queue.offer(next);
+			}
+			
+			next = cur * 2;
+			if (next == k) {
+				ans = dist[cur] + 1;
+				parent[next] = cur;
+				return;
+			} else if(next < 2 * k && dist[next] > dist[cur] + 1) {
+				dist[next] = dist[cur] + 1;
+				parent[next] = cur;
+				queue.offer(next);
+			}
 		}
-		
 		
 	}
 }
