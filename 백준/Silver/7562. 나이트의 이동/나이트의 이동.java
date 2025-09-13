@@ -41,8 +41,7 @@ public class Main {
 			for (int d = 0; d < 8; d++) {
 				int nx = node[0] + dx[d];
 				int ny = node[1] + dy[d];
-				if(outOfMap(nx,ny)) continue;
-				if(dist[nx][ny] != Integer.MAX_VALUE) continue;
+				if(outOfMap(nx,ny) || dist[nx][ny] != Integer.MAX_VALUE) continue;
 				dist[nx][ny] = dist[node[0]][node[1]] + 1;
 				queue.offer(new int[] {nx,ny});
 			}
