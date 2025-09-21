@@ -2,9 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
+import java.util.function.ToIntFunction;
 
 public class Main {
 	static class Edge implements Comparable<Edge> {
@@ -38,6 +39,7 @@ public class Main {
 	static ArrayList<Planet> universe;
 	static int[] parent, size;
 	static int n;
+	static PriorityQueue<Edge> pq;
 	public static void main(String[] args) throws IOException {
 //		BufferedReader br = new BufferedReader(new FileReader("data/input.txt"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -50,25 +52,10 @@ public class Main {
 			st = new StringTokenizer(br.readLine());
 			universe.add(new Planet(i,Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken()),Integer.parseInt(st.nextToken())));
 		}
-		PriorityQueue<Edge> pq = new PriorityQueue<>();
-		Collections.sort(universe,(o1,o2)->o1.x - o2.x);
-		for (int i = 1; i < n; i++) {
-			Planet p1 = universe.get(i);
-			Planet p2 = universe.get(i-1);
-			pq.add(new Edge(p1.no,p2.no,p1.x-p2.x));
-		}
-		Collections.sort(universe,(o1,o2)->o1.y - o2.y);
-		for (int i = 1; i < n; i++) {
-			Planet p1 = universe.get(i);
-			Planet p2 = universe.get(i-1);
-			pq.add(new Edge(p1.no,p2.no,p1.y-p2.y));
-		}
-		Collections.sort(universe,(o1,o2)->o1.z - o2.z);
-		for (int i = 1; i < n; i++) {
-			Planet p1 = universe.get(i);
-			Planet p2 = universe.get(i-1);
-			pq.add(new Edge(p1.no,p2.no,p1.z-p2.z));
-		}
+		pq = new PriorityQueue<>();
+		addEdgesByCoordinate(p -> p.x);
+		addEdgesByCoordinate(p -> p.y);
+		addEdgesByCoordinate(p -> p.z);
 		for (int i = 0; i < n; i++) {
 			parent[i] = i;
 			size[i] = 1;
@@ -101,4 +88,20 @@ public class Main {
 		if(parent[v] == v) return v;
 		return parent[v] = find(parent[v]);
 	}
+	private static void addEdgesByCoordinate(ToIntFunction<Planet> coordExtractor) {
+	    // 1. 받은 함수를 기준으로 행성 리스트를 정렬
+	    universe.sort(Comparator.comparingInt(coordExtractor));
+
+	    // 2. 인접한 행성 간의 간선을 생성합니다.
+	    for (int i = 1; i < universe.size(); i++) {
+	        Planet p1 = universe.get(i);
+	        Planet p2 = universe.get(i - 1);
+	        
+	        // 3. 받은 함수로 각 행성의 좌표 값을 직접 계산하여 가중치 계산
+	        int weight = coordExtractor.applyAsInt(p1) - coordExtractor.applyAsInt(p2);
+	        pq.add(new Edge(p1.no, p2.no, Math.abs(weight)));
+	    }
+	}
 }
+
+
