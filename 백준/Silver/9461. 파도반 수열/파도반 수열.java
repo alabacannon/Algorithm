@@ -1,30 +1,33 @@
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
-		//System.setIn(new FileInputStream("data/input.txt"));
-		Scanner sc = new Scanner(System.in);
-		int t = sc.nextInt();
-		long[] p = new long[101];
-		p[1] = 1; 
-		p[2] = 1; 
-		p[3] = 1; 
-		p[4] = 2;
-		p[5] = 2;
-		p[6] = 3;
-		p[7] = 4;
-		p[8] = 5;
-		p[9] = 7;
-		p[10] = 9;
-		for (int i = 11; i <= 100; i++) {
-			p[i] = p[i-1] + p[i-5];
-		}
+	public static void main(String[] args) throws IOException  {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		
-		for (int test = 0; test < t; test++) {
-			System.out.println(p[sc.nextInt()]);
+		int T = Integer.parseInt(br.readLine());
+		List<Long> l = new ArrayList<>();
+		l.add((long) 1);
+		l.add((long)1);
+		l.add((long)1);
+		l.add((long)2);
+		l.add((long)2);
+		int idx = 0;
+		for(int t = 0; t < T; t++) {
+			int x = Integer.parseInt(br.readLine());
+			
+			if(x < l.size()) {
+				System.out.println(l.get(x-1));
+			}
+			else {
+				while(x > l.size()) {
+					l.add(l.get(l.size()-1) + l.get(idx++));
+				}
+				System.out.println(l.get(x-1));
+			}
 		}
 	}
-
 }
