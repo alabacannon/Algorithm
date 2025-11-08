@@ -1,36 +1,44 @@
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Main {
 	static int k;
-	static int[] arr;
-	static Scanner sc;
+	static ArrayList<ArrayList<Integer>> tree;
+	static StringTokenizer st;
+	static StringBuilder sb = new StringBuilder();
 	public static void main(String[] args) throws IOException {
-		//System.setIn(new FileInputStream("data/input.txt"));
-		sc = new Scanner(System.in);
-		k = sc.nextInt();
-		arr = new int[1<<k];
-		inOrder(1);
-		int index = 1;
-		for (int i = 0; i < k; i++) {
-			for (int j = 0; j < 1<<i; j++) {
-				System.out.print(arr[index] + " ");
-				index++;
-			}
-			System.out.println();
+//		BufferedReader br = new BufferedReader(new FileReader("data/input.txt"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		k = Integer.parseInt(br.readLine());
+		st = new StringTokenizer(br.readLine());
+		tree = new ArrayList<>();
+		for (int i = 0; i < k; i++) { 
+			tree.add(new ArrayList<>());
 		}
+		inOrder(0);
+		printTree();
+		br.close();
 	}
-
-	private static void inOrder(int idx) {
-		if (idx >= 1<<(k-1)) {
-			arr[idx] = sc.nextInt();
+	private static void inOrder(int depth) {
+		if (depth == k-1) {
+			tree.get(depth).add(Integer.parseInt(st.nextToken()));
 			return;
 		}
-		inOrder(idx<<1);
-		arr[idx] = sc.nextInt();
-		inOrder((idx<<1)+1);
+		
+		inOrder(depth+1);
+		tree.get(depth).add(Integer.parseInt(st.nextToken()));
+		inOrder(depth+1);
 	}
-	
+	private static void printTree() {
+		for (ArrayList<Integer> level : tree) {
+			for (Integer node : level) {
+				sb.append(node).append(" ");
+			}
+			sb.append("\n");
+		}
+		System.out.println(sb);
+	}
 }
